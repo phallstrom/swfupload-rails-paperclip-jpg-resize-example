@@ -1,0 +1,64 @@
+<% content_for :head do %>
+  <%= javascript_include_tag '/swfupload/swfupload' %>
+  <%= javascript_include_tag 'swfupload_handlers' %>
+<% end %>
+
+<% content_for :inline_javascript do %>
+  var swfu
+
+  $(document).ready(function() {
+    swfu = new SWFUpload({
+      upload_url                   : "<%= upload_path %>",
+      file_post_name               : "Filedata",
+      post_params                  : {
+                                      "<%= key = ActionController::Base.session_options[:key] %>" : "<%= cookies[key] %>",
+                                      "<%= request_forgery_protection_token %>"    : "<%= form_authenticity_token %>"
+                                     },
+      use_query_string             : true,
+      requeue_on_error             : false,
+      file_types                   : '*.jpg;*.jpeg',
+      file_types_description       : "JPG Images",
+      file_size_limit              : "20 MB",
+      file_upload_limit            : 0,
+      file_queue_limit             : 0,
+      flash_url                    : "/swfupload/swfupload.swf",
+      debug                        : true,
+      button_placeholder_id        : "swf_button_place_holder",
+      button_width                 : 300,
+      button_height                : 20,
+      button_text                  : "",
+      button_action                : SWFUpload.BUTTON_ACTION.SELECT_FILES,
+      button_cursor                : SWFUpload.CURSOR.HAND,
+      button_window_mode           : SWFUpload.WINDOW_MODE.TRANSPARENT,
+      custom_settings              : {
+                                      thumbnail_height: 1000,
+                                      thumbnail_width: 1000,
+                                      thumbnail_quality: 100
+                                     },
+
+
+      swfupload_preload_handler    : swfupload_preload,
+      swfupload_load_failed_handler: swfupload_load_failed,
+      swfupload_loaded_handler     : swfupload_loaded,
+      file_dialog_start_handler    : swfupload_file_dialog_start,
+      file_queued_handler          : swfupload_file_queued,
+      file_queue_error_handler     : swfupload_file_queue_error,
+      file_dialog_complete_handler : swfupload_file_dialog_complete,
+      upload_start_handler         : swfupload_upload_start,
+      upload_progress_handler      : swfupload_upload_progress,
+      upload_error_handler         : swfupload_upload_error,
+      upload_success_handler       : swfupload_upload_success,
+      upload_complete_handler      : swfupload_upload_complete,
+      debug_handler                : swfupload_debug
+    })
+  })
+<% end %>
+
+<% form_tag upload_path, :multipart => true do %>
+  <div style='position: relative; border: 1px solid red; xbackground: pink; height: 20px; width: 300px;'>
+    <div style='position: absolute; top: 0; left: 0; width: 300px; text-align: center; z-index: 0'>Click here to upload your photos</span>
+    <div style='position: absolute; top: 0; left: 0; z-index: 1'>
+      <div id="swf_button_place_holder"></div>
+    </div>
+  </div>
+<% end %>
